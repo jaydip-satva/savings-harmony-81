@@ -6,12 +6,14 @@ import Navbar from '../components/layout/Navbar';
 import SideMenu from '../components/layout/SideMenu';
 import Dashboard from '../components/dashboard/Dashboard';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { getUserTransactions } from '../services/transactionService';
 
 const { Content } = Layout;
 
 const DashboardPage = () => {
   const { user, isAuthenticated } = useAuth();
+  const { isDarkMode } = useTheme();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
@@ -38,11 +40,13 @@ const DashboardPage = () => {
         <Content className="p-6 md:p-8" style={{ 
           overflow: 'auto', 
           height: 'calc(100vh - 64px)',
-          backgroundImage: 'linear-gradient(184.1deg, rgba(249,255,182,0.1) 44.7%, rgba(226,255,172,0.1) 67.2%)'
+          [isDarkMode ? 'backgroundColor' : 'backgroundImage']: isDarkMode 
+            ? '#141414' 
+            : 'linear-gradient(184.1deg, rgba(249,255,182,0.1) 44.7%, rgba(226,255,172,0.1) 67.2%)'
         }}>
           <div className="pb-6 animate-fade-in">
-            <h1 className="text-2xl font-semibold animate-slide-up">Dashboard</h1>
-            <p className="text-gray-500 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <h1 className={`text-2xl font-semibold animate-slide-up ${isDarkMode ? 'text-white' : ''}`}>Dashboard</h1>
+            <p className={`animate-slide-up ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} style={{ animationDelay: '0.1s' }}>
               Welcome back, <span className="text-primary font-medium">{user?.name}!</span>
             </p>
           </div>

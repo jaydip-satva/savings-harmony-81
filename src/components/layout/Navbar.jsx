@@ -1,15 +1,22 @@
 
 import React from 'react';
 import { Layout, Menu, Button, Typography, Avatar, Dropdown } from 'antd';
-import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import { 
+  UserOutlined, 
+  LogoutOutlined,
+  SunOutlined,
+  MoonOutlined
+} from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const { Header } = Layout;
 const { Title } = Typography;
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
+  const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -28,23 +35,30 @@ const Navbar = () => {
 
   return (
     <Header 
-      className="px-6 flex items-center justify-between bg-white shadow-sm z-10"
+      className={`px-6 flex items-center justify-between z-10 ${isDarkMode ? 'bg-[#141414] text-white' : 'bg-white'}`}
       style={{ position: 'sticky', top: 0, zIndex: 1, width: '100%', padding: '0 24px' }}
     >
       <div className="flex items-center">
         <Link to="/">
-          <Title level={3} className="m-0 text-primary">
+          <Title level={3} className={`m-0 ${isDarkMode ? 'text-white' : 'text-primary'}`}>
             SavingsSync
           </Title>
         </Link>
       </div>
 
       <div className="flex items-center">
+        <Button 
+          type="text"
+          icon={isDarkMode ? <SunOutlined /> : <MoonOutlined />}
+          onClick={toggleTheme}
+          className={`mr-4 ${isDarkMode ? 'text-white hover:text-yellow-300' : 'text-gray-600 hover:text-gray-900'}`}
+        />
+        
         {!isAuthenticated ? (
           <>
             {location.pathname !== '/login' && (
               <Link to="/login">
-                <Button type="text" className="mr-2">
+                <Button type="text" className={`mr-2 ${isDarkMode ? 'text-white' : ''}`}>
                   Log in
                 </Button>
               </Link>
@@ -59,12 +73,16 @@ const Navbar = () => {
             )}
           </>
         ) : (
-          <Dropdown menu={userMenu} trigger={['click']}>
-            <div className="flex items-center cursor-pointer hover:bg-gray-100 px-3 py-1 rounded-md transition-colors">
-              <Avatar icon={<UserOutlined />} className="mr-2 animate-pulse" style={{ backgroundColor: '#1890ff' }} />
-              <span className="mr-2">{user.name}</span>
-            </div>
-          </Dropdown>
+          <div className="flex items-center">
+            <Avatar icon={<UserOutlined />} className="mr-2 animate-pulse" style={{ backgroundColor: '#1890ff' }} />
+            <span className={`mr-2 ${isDarkMode ? 'text-white' : ''}`}>{user.name}</span>
+            <Button 
+              type="text"
+              icon={<LogoutOutlined />}
+              onClick={handleLogout}
+              className={`ml-2 ${isDarkMode ? 'text-white hover:text-red-400' : 'text-gray-600 hover:text-red-500'}`}
+            />
+          </div>
         )}
       </div>
     </Header>

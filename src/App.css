@@ -110,10 +110,49 @@
   animation: pulse 2s infinite;
 }
 
+/* Theme support */
+.dark .ant-btn {
+  box-shadow: none;
+}
+
+.dark .ant-btn-primary {
+  background: #177ddc;
+}
+
+.dark .ant-card {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.dark .ant-select-dropdown {
+  background-color: #1f1f1f;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.dark .ant-menu-light {
+  background: #141414;
+}
+
+.dark .ant-select-dropdown {
+  background-color: #1f1f1f;
+}
+
 /* Fix all scrolling issues */
 html, body {
-  overflow: hidden;
-  height: 100%;
   margin: 0;
   padding: 0;
+  height: 100%;
+}
+
+body {
+  overflow: auto;
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+
+/* Dashboard & inner pages scrolling */
+.ant-layout-content {
+  overflow: auto;
+  height: calc(100vh - 64px);
 }

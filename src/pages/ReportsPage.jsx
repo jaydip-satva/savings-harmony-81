@@ -6,12 +6,14 @@ import Navbar from '../components/layout/Navbar';
 import SideMenu from '../components/layout/SideMenu';
 import ReportGenerator from '../components/reports/ReportGenerator';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { getUserTransactions } from '../services/transactionService';
 
 const { Content } = Layout;
 
 const ReportsPage = () => {
   const { user, isAuthenticated } = useAuth();
+  const { isDarkMode } = useTheme();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
@@ -30,6 +32,10 @@ const ReportsPage = () => {
     }
   }, [user]);
 
+  const contentBackground = isDarkMode
+    ? 'background-color: #141414;'
+    : 'background-image: linear-gradient(90deg, hsla(139, 70%, 75%, 0.1) 0%, hsla(63, 90%, 76%, 0.1) 100%);';
+
   return (
     <Layout style={{ minHeight: '100vh', height: '100%' }}>
       <SideMenu collapsed={collapsed} setCollapsed={setCollapsed} />
@@ -38,11 +44,13 @@ const ReportsPage = () => {
         <Content className="p-6 md:p-8" style={{ 
           overflow: 'auto', 
           height: 'calc(100vh - 64px)',
-          backgroundImage: 'linear-gradient(90deg, hsla(139, 70%, 75%, 0.1) 0%, hsla(63, 90%, 76%, 0.1) 100%)'
+          [isDarkMode ? 'backgroundColor' : 'backgroundImage']: isDarkMode 
+            ? '#141414' 
+            : 'linear-gradient(90deg, hsla(139, 70%, 75%, 0.1) 0%, hsla(63, 90%, 76%, 0.1) 100%)'
         }}>
           <div className="pb-6 animate-fade-in">
-            <h1 className="text-2xl font-semibold animate-slide-up">Reports</h1>
-            <p className="text-gray-500 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <h1 className={`text-2xl font-semibold animate-slide-up ${isDarkMode ? 'text-white' : ''}`}>Reports</h1>
+            <p className={`animate-slide-up ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} style={{ animationDelay: '0.1s' }}>
               Generate and export your financial reports
             </p>
           </div>

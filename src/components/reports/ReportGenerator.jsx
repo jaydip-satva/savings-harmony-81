@@ -1,21 +1,19 @@
 
 import React, { useState } from 'react';
-import { Card, Typography, Button, DatePicker, Select, Space, Radio, message } from 'antd';
-import { DownloadOutlined, FileExcelOutlined, FilePdfOutlined } from '@ant-design/icons';
+import { Card, Typography, Button, DatePicker, Radio, Space, message } from 'antd';
+import { DownloadOutlined, FileExcelOutlined } from '@ant-design/icons';
 import { format } from 'date-fns';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 import Papa from 'papaparse';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
-const { Option } = Select;
 
 const ReportGenerator = ({ transactions }) => {
   const [dateRange, setDateRange] = useState([null, null]);
   const [reportType, setReportType] = useState('all');
-  const [fileFormat, setFileFormat] = useState('pdf');
   const [loading, setLoading] = useState(false);
+  const { isDarkMode } = useTheme();
 
   // Filter transactions based on date range and report type
   const getFilteredTransactions = () => {
@@ -38,115 +36,6 @@ const ReportGenerator = ({ transactions }) => {
     }
     
     return filtered;
-  };
-
-  // Generate PDF report
-  const generatePDF = (filteredTransactions) => {
-    try {
-      const doc = new jsPDF();
-      
-      // Add title
-      doc.setFontSize(20);
-      doc.text('Financial Report', 105, 15, { align: 'center' });
-      doc.setFontSize(12);
-      
-      // Add date range
-      if (dateRange[0] && dateRange[1]) {
-        const startDateStr = format(dateRange[0].toDate(), 'MMM dd, yyyy');
-        const endDateStr = format(dateRange[1].toDate(), 'MMM dd, yyyy');
-        doc.text(`Period: ${startDateStr} to ${endDateStr}`, 105, 25, { align: 'center' });
-      }
-      
-      // Add report type
-      const reportTypeText = reportType === 'all' 
-        ? 'All Transactions' 
-        : reportType === 'income' 
-          ? 'Income Transactions' 
-          : 'Expense Transactions';
-      doc.text(`Report Type: ${reportTypeText}`, 105, 32, { align: 'center' });
-      
-      // Add generation date
-      doc.text(`Generated on: ${format(new Date(), 'MMM dd, yyyy')}`, 105, 39, { align: 'center' });
-      
-      // Add summary section
-      const totalIncome = filteredTransactions
-        .filter(t => t.type === 'income')
-        .reduce((sum, t) => sum + parseFloat(t.amount), 0);
-        
-      const totalExpense = filteredTransactions
-        .filter(t => t.type === 'expense')
-        .reduce((sum, t) => sum + parseFloat(t.amount), 0);
-        
-      const netBalance = totalIncome - totalExpense;
-      
-      doc.setFontSize(14);
-      doc.text('Summary', 14, 50);
-      doc.setFontSize(12);
-      doc.text(`Total Income: $${totalIncome.toFixed(2)}`, 14, 60);
-      doc.text(`Total Expenses: $${totalExpense.toFixed(2)}`, 14, 67);
-      doc.text(`Net Balance: $${netBalance.toFixed(2)}`, 14, 74);
-      
-      // Add transactions table
-      if (filteredTransactions.length > 0) {
-        doc.setFontSize(14);
-        doc.text('Transaction Details', 14, 85);
-        
-        const tableColumn = ["Date", "Description", "Category", "Type", "Amount"];
-        const tableRows = filteredTransactions.map(t => [
-          format(new Date(t.date), 'MMM dd, yyyy'),
-          t.description,
-          t.category,
-          t.type.charAt(0).toUpperCase() + t.type.slice(1),
-          `$${parseFloat(t.amount).toFixed(2)}`
-        ]);
-        
-        doc.autoTable({
-          startY: 90,
-          head: [tableColumn],
-          body: tableRows,
-          theme: 'striped',
-          headStyles: { fillColor: [24, 144, 255] }
-        });
-      } else {
-        doc.text('No transactions found for the selected criteria.', 14, 90);
-      }
-      
-      // Add category breakdown
-      if (filteredTransactions.length > 0) {
-        const lastY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 100;
-        doc.setFontSize(14);
-        doc.text('Category Breakdown', 14, lastY);
-        
-        // Group by category
-        const categoryMap = filteredTransactions.reduce((acc, t) => {
-          if (!acc[t.category]) {
-            acc[t.category] = 0;
-          }
-          acc[t.category] += parseFloat(t.amount);
-          return acc;
-        }, {});
-        
-        const categoryData = Object.keys(categoryMap).map(category => [
-          category,
-          `$${categoryMap[category].toFixed(2)}`
-        ]);
-        
-        doc.autoTable({
-          startY: lastY + 5,
-          head: [["Category", "Amount"]],
-          body: categoryData,
-          theme: 'striped',
-          headStyles: { fillColor: [24, 144, 255] }
-        });
-      }
-      
-      // Save the PDF - this is the key part to fix the download
-      doc.save(`financial-report-${format(new Date(), 'yyyy-MM-dd')}.pdf`);
-      return true;
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      return false;
-    }
   };
 
   // Generate CSV report
@@ -179,7 +68,7 @@ const ReportGenerator = ({ transactions }) => {
     }
   };
 
-  // Generate report based on selected format
+  // Generate report
   const generateReport = () => {
     setLoading(true);
     
@@ -192,16 +81,10 @@ const ReportGenerator = ({ transactions }) => {
         return;
       }
       
-      let success = false;
-      
-      if (fileFormat === 'pdf') {
-        success = generatePDF(filteredTransactions);
-      } else {
-        success = generateCSV(filteredTransactions);
-      }
+      let success = generateCSV(filteredTransactions);
       
       if (success) {
-        message.success(`Report successfully generated in ${fileFormat.toUpperCase()} format.`);
+        message.success('Report successfully generated in CSV format.');
       } else {
         message.error('Failed to generate report. Please try again.');
       }
@@ -213,26 +96,36 @@ const ReportGenerator = ({ transactions }) => {
     }
   };
 
-  return (
-    <Card 
-      className="shadow-sm animate-fade-in" 
-      style={{ 
+  const cardStyle = isDarkMode 
+    ? { 
+        background: 'linear-gradient(109.6deg, rgba(41, 44, 52, 1) 11.2%, rgba(51, 56, 68, 1) 91.1%)',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        border: 'none',
+        transition: 'all 0.3s ease'
+      } 
+    : { 
         backgroundImage: 'linear-gradient(109.6deg, rgba(223,234,247,1) 11.2%, rgba(244,248,252,1) 91.1%)',
         borderRadius: '12px',
         overflow: 'hidden',
         border: 'none',
         transition: 'all 0.3s ease'
-      }}
+      };
+
+  return (
+    <Card 
+      className="shadow-sm animate-fade-in" 
+      style={cardStyle}
       hoverable
     >
-      <Title level={4} className="animate-slide-up mb-2">Generate Financial Report</Title>
-      <Text type="secondary" className="block mb-6 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-        Create customized reports of your financial data for selected date ranges and export them in your preferred format.
+      <Title level={4} className={`animate-slide-up mb-2 ${isDarkMode ? 'text-white' : ''}`}>Generate Financial Report</Title>
+      <Text type={isDarkMode ? "secondary" : "secondary"} className={`block mb-6 animate-slide-up ${isDarkMode ? 'text-gray-400' : ''}`} style={{ animationDelay: '0.1s' }}>
+        Create customized reports of your financial data for selected date ranges and export them in CSV format.
       </Text>
       
       <div className="space-y-4">
         <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <Text strong className="block mb-2">Date Range</Text>
+          <Text strong className={`block mb-2 ${isDarkMode ? 'text-white' : ''}`}>Date Range</Text>
           <RangePicker 
             style={{ width: '100%' }}
             onChange={setDateRange}
@@ -241,7 +134,7 @@ const ReportGenerator = ({ transactions }) => {
         </div>
         
         <div className="animate-slide-up" style={{ animationDelay: '0.3s' }}>
-          <Text strong className="block mb-2">Report Type</Text>
+          <Text strong className={`block mb-2 ${isDarkMode ? 'text-white' : ''}`}>Report Type</Text>
           <Radio.Group 
             value={reportType} 
             onChange={e => setReportType(e.target.value)}
@@ -271,40 +164,6 @@ const ReportGenerator = ({ transactions }) => {
           </Radio.Group>
         </div>
         
-        <div className="animate-slide-up" style={{ animationDelay: '0.4s' }}>
-          <Text strong className="block mb-2">File Format</Text>
-          <Radio.Group 
-            value={fileFormat} 
-            onChange={e => setFileFormat(e.target.value)}
-            className="w-full"
-          >
-            <Radio.Button 
-              value="pdf" 
-              style={{ 
-                width: '50%', 
-                textAlign: 'center',
-                transition: 'all 0.3s ease',
-                backgroundColor: fileFormat === 'pdf' ? '#1890ff20' : ''
-              }}
-              className="hover-scale"
-            >
-              <FilePdfOutlined /> PDF
-            </Radio.Button>
-            <Radio.Button 
-              value="csv" 
-              style={{ 
-                width: '50%', 
-                textAlign: 'center',
-                transition: 'all 0.3s ease',
-                backgroundColor: fileFormat === 'csv' ? '#1890ff20' : ''
-              }}
-              className="hover-scale"
-            >
-              <FileExcelOutlined /> CSV
-            </Radio.Button>
-          </Radio.Group>
-        </div>
-        
         <Button 
           type="primary" 
           icon={<DownloadOutlined />} 
@@ -316,12 +175,12 @@ const ReportGenerator = ({ transactions }) => {
             height: '45px', 
             fontSize: '16px', 
             animationDelay: '0.5s',
-            background: 'linear-gradient(90deg, #1890ff, #69c0ff)',
+            background: isDarkMode ? 'linear-gradient(90deg, #177ddc, #40a9ff)' : 'linear-gradient(90deg, #1890ff, #69c0ff)',
             border: 'none',
-            boxShadow: '0 8px 16px -4px rgba(24, 144, 255, 0.3)'
+            boxShadow: isDarkMode ? '0 8px 16px -4px rgba(23, 125, 220, 0.3)' : '0 8px 16px -4px rgba(24, 144, 255, 0.3)'
           }}
         >
-          Generate Report
+          Generate CSV Report
         </Button>
       </div>
     </Card>

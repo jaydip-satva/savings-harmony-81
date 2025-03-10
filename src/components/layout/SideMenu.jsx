@@ -7,11 +7,13 @@ import {
   FileTextOutlined
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const { Sider } = Layout;
 
 const SideMenu = ({ collapsed, setCollapsed }) => {
   const location = useLocation();
+  const { isDarkMode } = useTheme();
   
   const menuItems = [
     {
@@ -37,7 +39,7 @@ const SideMenu = ({ collapsed, setCollapsed }) => {
       collapsible
       collapsed={collapsed}
       onCollapse={setCollapsed}
-      className="bg-white shadow-sm animate-slide-in"
+      className={`animate-slide-in ${isDarkMode ? 'bg-[#141414] shadow-lg' : 'bg-white shadow-sm'}`}
       style={{ 
         overflow: 'auto',
         height: '100vh',
@@ -50,12 +52,12 @@ const SideMenu = ({ collapsed, setCollapsed }) => {
       <div className="h-16 m-4 flex items-center justify-center">
         {!collapsed && (
           <Link to="/dashboard">
-            <h2 className="text-xl font-medium text-primary m-0">SavingsSync</h2>
+            <h2 className={`text-xl font-medium m-0 ${isDarkMode ? 'text-white' : 'text-primary'}`}>SavingsSync</h2>
           </Link>
         )}
       </div>
       <Menu
-        theme="light"
+        theme={isDarkMode ? "dark" : "light"}
         mode="inline"
         selectedKeys={[location.pathname]}
         style={{ borderRight: 0 }}
@@ -63,7 +65,7 @@ const SideMenu = ({ collapsed, setCollapsed }) => {
       />
       <div className="p-4 absolute bottom-0 left-0 right-0">
         {!collapsed && (
-          <div className="text-xs text-gray-400 text-center">
+          <div className={`text-xs text-center ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
             © {new Date().getFullYear()} SavingsSync
           </div>
         )}
