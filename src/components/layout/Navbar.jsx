@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Layout, Menu, Button, Typography, Avatar, Dropdown } from 'antd';
-import { UserOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
+import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -20,13 +20,6 @@ const Navbar = () => {
 
   const userMenu = (
     <Menu>
-      <Menu.Item key="profile" icon={<UserOutlined />}>
-        Profile
-      </Menu.Item>
-      <Menu.Item key="settings" icon={<SettingOutlined />}>
-        Settings
-      </Menu.Item>
-      <Menu.Divider />
       <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
         Logout
       </Menu.Item>
@@ -66,9 +59,9 @@ const Navbar = () => {
             )}
           </>
         ) : (
-          <Dropdown overlay={userMenu} trigger={['click']}>
-            <div className="flex items-center cursor-pointer">
-              <Avatar icon={<UserOutlined />} className="mr-2" />
+          <Dropdown menu={userMenu} trigger={['click']}>
+            <div className="flex items-center cursor-pointer hover:bg-gray-100 px-3 py-1 rounded-md transition-colors">
+              <Avatar icon={<UserOutlined />} className="mr-2 animate-pulse" style={{ backgroundColor: '#1890ff' }} />
               <span className="mr-2">{user.name}</span>
             </div>
           </Dropdown>

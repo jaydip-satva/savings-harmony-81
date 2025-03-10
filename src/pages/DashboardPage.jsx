@@ -31,18 +31,24 @@ const DashboardPage = () => {
   }, [user]);
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ minHeight: '100vh', height: '100%' }}>
       <SideMenu collapsed={collapsed} setCollapsed={setCollapsed} />
       <Layout>
         <Navbar />
-        <Content className="p-6 md:p-8">
-          <div className="pb-6">
-            <h1 className="text-2xl font-semibold">Dashboard</h1>
-            <p className="text-gray-500">Welcome back, {user?.name}!</p>
+        <Content className="p-6 md:p-8" style={{ 
+          overflow: 'auto', 
+          height: 'calc(100vh - 64px)',
+          backgroundImage: 'linear-gradient(184.1deg, rgba(249,255,182,0.1) 44.7%, rgba(226,255,172,0.1) 67.2%)'
+        }}>
+          <div className="pb-6 animate-fade-in">
+            <h1 className="text-2xl font-semibold animate-slide-up">Dashboard</h1>
+            <p className="text-gray-500 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+              Welcome back, <span className="text-primary font-medium">{user?.name}!</span>
+            </p>
           </div>
           
           {loading ? (
-            <div className="flex justify-center items-center h-64">
+            <div className="flex justify-center items-center h-64 animate-fade-in">
               <Spin size="large" />
             </div>
           ) : (

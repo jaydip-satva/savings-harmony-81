@@ -31,18 +31,24 @@ const ReportsPage = () => {
   }, [user]);
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ minHeight: '100vh', height: '100%' }}>
       <SideMenu collapsed={collapsed} setCollapsed={setCollapsed} />
       <Layout>
         <Navbar />
-        <Content className="p-6 md:p-8">
-          <div className="pb-6">
-            <h1 className="text-2xl font-semibold">Reports</h1>
-            <p className="text-gray-500">Generate and export your financial reports</p>
+        <Content className="p-6 md:p-8" style={{ 
+          overflow: 'auto', 
+          height: 'calc(100vh - 64px)',
+          backgroundImage: 'linear-gradient(90deg, hsla(139, 70%, 75%, 0.1) 0%, hsla(63, 90%, 76%, 0.1) 100%)'
+        }}>
+          <div className="pb-6 animate-fade-in">
+            <h1 className="text-2xl font-semibold animate-slide-up">Reports</h1>
+            <p className="text-gray-500 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+              Generate and export your financial reports
+            </p>
           </div>
           
           {loading ? (
-            <div className="flex justify-center items-center h-64">
+            <div className="flex justify-center items-center h-64 animate-fade-in">
               <Spin size="large" />
             </div>
           ) : (

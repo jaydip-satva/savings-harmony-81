@@ -4,9 +4,7 @@ import { Layout, Menu } from 'antd';
 import { 
   DashboardOutlined, 
   TransactionOutlined, 
-  PieChartOutlined, 
-  FileTextOutlined,
-  SettingOutlined
+  FileTextOutlined
 } from '@ant-design/icons';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -30,16 +28,6 @@ const SideMenu = ({ collapsed, setCollapsed }) => {
       key: '/reports',
       icon: <FileTextOutlined />,
       label: <Link to="/reports">Reports</Link>,
-    },
-    {
-      key: '/analytics',
-      icon: <PieChartOutlined />,
-      label: <Link to="/analytics">Analytics</Link>,
-    },
-    {
-      key: '/settings',
-      icon: <SettingOutlined />,
-      label: <Link to="/settings">Settings</Link>,
     }
   ];
 
