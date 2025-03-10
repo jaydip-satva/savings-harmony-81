@@ -1,6 +1,7 @@
 
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { message } from 'antd';
+import api from '../services/apiService';
 
 const AuthContext = createContext();
 
@@ -22,10 +23,11 @@ export const AuthProvider = ({ children }) => {
   // Register a new user
   const register = async (userData) => {
     try {
-      // Check if user already exists (in a real app, this would be done by the backend)
-      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+      // In a real app, this would be a POST request to an endpoint
+      // Here we're using json-server, so we'll first check if user exists
+      const users = await api.get('/users');
       
-      if (existingUsers.find(u => u.email === userData.email)) {
+      if (users.find(u => u.email === userData.email)) {
         throw new Error('Email already in use');
       }
 
@@ -38,12 +40,14 @@ export const AuthProvider = ({ children }) => {
         createdAt: new Date().toISOString()
       };
 
-      // Add user to "database"
-      existingUsers.push(newUser);
-      localStorage.setItem('users', JSON.stringify(existingUsers));
+      // Add user to database
+      const createdUser = await api.post('/users', newUser);
+
+      // Initialize empty transactions for the new user
+      await api.post(`/transactions`, { [createdUser.id]: [] });
 
       // Log in the user
-      const { password, ...userWithoutPassword } = newUser;
+      const { password, ...userWithoutPassword } = createdUser;
       setUser(userWithoutPassword);
       localStorage.setItem('user', JSON.stringify(userWithoutPassword));
       
@@ -58,9 +62,10 @@ export const AuthProvider = ({ children }) => {
   // Login user
   const login = async (email, password) => {
     try {
-      // Find user by email
-      const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      const user = existingUsers.find(u => u.email === email);
+      // In a real app, this would be a POST request with credentials
+      // For json-server, we'll simulate this by fetching users and filtering
+      const users = await api.get('/users');
+      const user = users.find(u => u.email === email);
 
       if (!user || user.password !== password) {
         throw new Error('Invalid email or password');

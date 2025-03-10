@@ -1,0 +1,106 @@
+
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Demo User",
+      "email": "demo@example.com",
+      "password": "password123",
+      "createdAt": "2023-05-15T10:30:00.000Z"
+    }
+  ],
+  "transactions": {
+    "1": [
+      {
+        "id": "1",
+        "type": "income",
+        "description": "Salary",
+        "amount": 5000,
+        "category": "Salary",
+        "date": "2023-05-01T00:00:00.000Z",
+        "createdAt": "2023-05-01T10:30:00.000Z"
+      },
+      {
+        "id": "2",
+        "type": "expense",
+        "description": "Groceries",
+        "amount": 150,
+        "category": "Food",
+        "date": "2023-05-03T00:00:00.000Z",
+        "createdAt": "2023-05-03T18:20:00.000Z"
+      },
+      {
+        "id": "3",
+        "type": "expense",
+        "description": "Rent",
+        "amount": 1200,
+        "category": "Rent",
+        "date": "2023-05-05T00:00:00.000Z",
+        "createdAt": "2023-05-05T09:10:00.000Z"
+      },
+      {
+        "id": "4",
+        "type": "expense",
+        "description": "Internet Bill",
+        "amount": 80,
+        "category": "Utilities",
+        "date": "2023-05-10T00:00:00.000Z",
+        "createdAt": "2023-05-10T14:45:00.000Z"
+      },
+      {
+        "id": "5",
+        "type": "income",
+        "description": "Freelance Work",
+        "amount": 1000,
+        "category": "Investment",
+        "date": "2023-05-15T00:00:00.000Z",
+        "createdAt": "2023-05-15T20:30:00.000Z"
+      },
+      {
+        "id": "6",
+        "type": "expense",
+        "description": "Dining Out",
+        "amount": 95,
+        "category": "Food",
+        "date": "2023-05-18T00:00:00.000Z",
+        "createdAt": "2023-05-18T22:10:00.000Z"
+      },
+      {
+        "id": "7",
+        "type": "expense",
+        "description": "Movie Tickets",
+        "amount": 30,
+        "category": "Entertainment",
+        "date": "2023-05-20T00:00:00.000Z",
+        "createdAt": "2023-05-20T19:20:00.000Z"
+      },
+      {
+        "id": "8",
+        "type": "expense",
+        "description": "Gas",
+        "amount": 40,
+        "category": "Transportation",
+        "date": "2023-05-22T00:00:00.000Z",
+        "createdAt": "2023-05-22T16:40:00.000Z"
+      },
+      {
+        "id": "9",
+        "type": "income",
+        "description": "Dividend",
+        "amount": 200,
+        "category": "Investment",
+        "date": "2023-05-25T00:00:00.000Z",
+        "createdAt": "2023-05-25T10:15:00.000Z"
+      },
+      {
+        "id": "10",
+        "type": "expense",
+        "description": "Phone Bill",
+        "amount": 65,
+        "category": "Utilities",
+        "date": "2023-05-28T00:00:00.000Z",
+        "createdAt": "2023-05-28T11:30:00.000Z"
+      }
+    ]
+  }
+}

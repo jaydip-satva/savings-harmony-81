@@ -25,11 +25,20 @@ const ReportsPage = () => {
   
   // Load user's transactions
   useEffect(() => {
-    if (user) {
-      const userTransactions = getUserTransactions(user.id);
-      setTransactions(userTransactions);
-      setLoading(false);
-    }
+    const fetchTransactions = async () => {
+      if (user) {
+        try {
+          const userTransactions = await getUserTransactions(user.id);
+          setTransactions(userTransactions);
+        } catch (error) {
+          console.error('Error fetching transactions:', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    
+    fetchTransactions();
   }, [user]);
 
   const contentBackground = isDarkMode

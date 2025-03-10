@@ -26,15 +26,21 @@ const TransactionsPage = () => {
   
   // Load user's transactions
   useEffect(() => {
-    if (user) {
-      loadTransactions();
-    }
+    loadTransactions();
   }, [user]);
   
-  const loadTransactions = () => {
-    const userTransactions = getUserTransactions(user.id);
-    setTransactions(userTransactions);
-    setLoading(false);
+  const loadTransactions = async () => {
+    if (user) {
+      try {
+        setLoading(true);
+        const userTransactions = await getUserTransactions(user.id);
+        setTransactions(userTransactions);
+      } catch (error) {
+        console.error('Error loading transactions:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   const showModal = () => {

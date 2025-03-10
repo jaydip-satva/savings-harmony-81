@@ -32,10 +32,15 @@ const TransactionList = ({ transactions, onUpdate }) => {
       okText: 'Yes, delete it',
       okType: 'danger',
       cancelText: 'No, keep it',
-      onOk() {
-        deleteTransaction(user.id, transaction.id);
-        message.success('Transaction deleted successfully');
-        onUpdate();
+      onOk: async () => {
+        try {
+          await deleteTransaction(user.id, transaction.id);
+          message.success('Transaction deleted successfully');
+          onUpdate();
+        } catch (error) {
+          message.error('Failed to delete transaction');
+          console.error(error);
+        }
       },
     });
   };
